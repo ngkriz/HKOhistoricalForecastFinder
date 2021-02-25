@@ -1,10 +1,4 @@
-
-
-###the following is the execution
 #execute to get data from gov press
-#select the month required and the days of the month
-
-
 
 urlA=[]
 urlB=[]
@@ -14,9 +8,23 @@ urlD=[]
 import requests
 
 
-for d in range (0,31):
+
+year = str(input("Which year?"))
+month = str(input("Which month (in MM) ?"))
+day = int(input("How many days in that month?"))
+
+checkingmonth = year+month
+
+
+
+
+
+
+
+
+for d in range (0,day):
     D=(str(d+1).zfill(2))
-    url = 'https://www.info.gov.hk/gia/wr/202012/'+D+'.htm'
+    url = 'https://www.info.gov.hk/gia/wr/' + checkingmonth +'/'+D+'.htm'
     data = requests.get(url)
     ninedayselector()
 
