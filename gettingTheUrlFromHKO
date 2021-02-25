@@ -1,0 +1,25 @@
+
+
+###the following is the execution
+#execute to get data from gov press
+#select the month required and the days of the month
+
+
+
+urlA=[]
+urlB=[]
+urlC=[]
+urlD=[]
+
+import requests
+
+
+for d in range (0,31):
+    D=(str(d+1).zfill(2))
+    url = 'https://www.info.gov.hk/gia/wr/202012/'+D+'.htm'
+    data = requests.get(url)
+    ninedayselector()
+
+import pandas as pd
+urldf=pd.DataFrame(urlD)
+urldf
