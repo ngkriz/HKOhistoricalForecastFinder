@@ -1,0 +1,36 @@
+##functions
+
+
+#check url
+def checkurl():
+    print ('url:',url)
+    print('search:',search[0])
+    print('urlA:',urlA)
+    print('urlB:',urlB)
+    print('urlC:',urlC)
+    print('urlD:',urlD)
+    
+    
+#select the url from the hkgov press release
+def ninedayselector():
+    global urlA
+    global urlB
+    global urlC
+    
+    messtext=data.text
+    intolist = messtext.split("/gia")   
+
+           
+    search = [KEYWORD for KEYWORD in intolist if ('9-DAY WEATHER FORECAST' in KEYWORD)]
+
+    urlA=search[0].split('>')
+    urlB=urlA[0]
+    urlC = 'https://www.info.gov.hk/gia'+urlB[:-1]
+    urlD.append(urlC)
+    print(urlC)
+    
+
+#output url is urlC, urlD is the list
+
+
+
