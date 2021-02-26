@@ -1,0 +1,46 @@
+#run after Url puller. Will auto gen a csv file
+
+
+datetemp={'Forecast Issue time':{}}
+
+
+def tempfinder():
+    messtext=data.text
+
+
+    forecastat = messtext.split('DISPATCHED BY HONG KONG OBSERVATORY ')[1].lstrip().split('<br>')[0]
+
+    datetemp[forecastat]={}
+
+
+    
+    for j in range (0,9):
+        if j==0:
+            pass
+        else:
+            datefinder = messtext.split('DATE/MONTH')[j].lstrip().split('(')[0]
+
+            minmaxtemp = messtext.split('TEMP RANGE:')[j].lstrip().split('C')[0]
+        
+            datetemp[forecastat][datefinder]=minmaxtemp
+
+
+
+
+
+
+
+for i in range (0,len(urlD)):
+    url = urlD[i]
+    data = requests.get(url)
+    tempfinder()
+
+    
+import pandas as pd
+dt=pd.DataFrame(datetemp)
+dt
+
+
+
+
+dt.to_csv (r'\Users\CN\Desktop\export_dataframe.csv', index = False, header=True)
