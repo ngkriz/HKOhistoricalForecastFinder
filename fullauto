@@ -115,7 +115,9 @@ for i in range (0,len(urlD)):
     
 import pandas as pd
 dt=pd.DataFrame(datetemp)
-dt
+
 
 
 dt.to_csv (r'\Users\CN\Desktop\export_dataframe.csv', index = True, header=True)
+
+dt
