@@ -15,7 +15,7 @@ day = int(input("How many days in that month?"))
 
 checkingmonth = year+month
 
-
+D=(str(day).zfill(2))
 
 
 
