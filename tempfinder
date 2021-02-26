@@ -1,0 +1,44 @@
+#tempfinder - decode HKO url into date and temp
+
+
+#request data
+url = 'https://www.info.gov.hk/gia/wr/202011/02/P2020110200932.htm'
+data = requests.get(url)
+
+
+
+#function
+def tempfinder():
+    messtext=data.text
+
+
+    forecastat = messtext.split('DISPATCHED BY HONG KONG OBSERVATORY ')[1].lstrip().split('<br>')[0]
+
+    datetemp={forecastat:{}}
+
+    for j in range (0,9):
+        if j==0:
+            pass
+        else:
+            datefinder = messtext.split('DATE/MONTH')[j].lstrip().split('(')[0]
+            datefinder = (str(datefinder).zfill(6))
+
+            minmaxtemp = messtext.split('TEMP RANGE:')[j].lstrip().split('C')[0]
+        
+            datetemp[forecastat][datefinder]=minmaxtemp
+
+    print(forecastat)
+    print (datetemp)
+
+
+
+#execute
+tempfinder()
+
+
+
+#pandas
+import pandas as pd
+dt=pd.DataFrame(datetemp)
+dt
+
