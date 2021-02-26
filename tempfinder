@@ -1,27 +1,35 @@
-#tempfinder - decode HKO url into date and temp
+#setup dictionary in separate runtime
+datetemp={'Forecast Issue time':{}}
 
 
-#request data
-url = 'https://www.info.gov.hk/gia/wr/202011/02/P2020110200932.htm'
+
+
+
+
+#request the file from the url
+url = 'https://www.info.gov.hk/gia/wr/201908/28/P2019082800620.htm'
 data = requests.get(url)
 
 
 
-#function
+
+
+
 def tempfinder():
     messtext=data.text
 
 
     forecastat = messtext.split('DISPATCHED BY HONG KONG OBSERVATORY ')[1].lstrip().split('<br>')[0]
 
-    datetemp={forecastat:{}}
+    datetemp[forecastat]={}
 
+
+    
     for j in range (0,9):
         if j==0:
             pass
         else:
             datefinder = messtext.split('DATE/MONTH')[j].lstrip().split('(')[0]
-            datefinder = (str(datefinder).zfill(6))
 
             minmaxtemp = messtext.split('TEMP RANGE:')[j].lstrip().split('C')[0]
         
@@ -32,13 +40,19 @@ def tempfinder():
 
 
 
-#execute
-tempfinder()
 
 
 
-#pandas
+
+
+
+#load the dict
+datetemp
+
+
+
+
+#view as DataFrame
 import pandas as pd
 dt=pd.DataFrame(datetemp)
 dt
-
