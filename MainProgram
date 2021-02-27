@@ -1,0 +1,196 @@
+##functions
+
+
+#check url
+def checkurl():
+    print ('url:',url)
+    print('search:',search[0])
+    print('urlA:',urlA)
+    print('urlB:',urlB)
+    print('urlC:',urlC)
+    print('urlD:',urlD)
+    
+    
+#select the url from the hkgov press release
+def ninedayselector():
+    global urlA
+    global urlB
+    global urlC
+    
+    messtext=data.text
+    intolist = messtext.split("/gia")   
+
+           
+    search = [KEYWORD for KEYWORD in intolist if ('9-DAY WEATHER FORECAST' in KEYWORD)]
+
+    urlA=search[0].split('>')
+    urlB=urlA[0]
+    urlC = 'https://www.info.gov.hk/gia'+urlB[:-1]
+    urlD.append(urlC)
+    print(urlC)
+    #output url is urlC, urlD is the list
+
+
+# pull temp data from individual 9-days forecast
+def tempfinder():
+    messtext=data.text
+    forecastat = messtext.split('DISPATCHED BY HONG KONG OBSERVATORY ')[1].lstrip().split('<br>')[0]
+    datetemp[forecastat]={}
+    datewind[forecastat]={}
+
+            
+    #record weather data into the dictionaries
+    for j in range (0,9):
+        if j==0:
+            pass
+        else:
+            # find the date of forecasting target
+            datefinder = messtext.split('DATE/MONTH')[j].lstrip().split('(')[0]
+            
+            # find the windspeed and direction of forecasting target
+            windinfo = messtext.split('WIND:')[j].lstrip().split('.')[0]
+            # record the windinfo into the Dictionary
+            datewind[forecastat][datefinder]=windinfo
+            
+            # find the min/max temp of forecasting target
+            minmaxtemp = messtext.split('TEMP RANGE:')[j].lstrip().split('C')[0]
+            # record the min/max temp into the Dictionary
+            datetemp[forecastat][datefinder]=minmaxtemp
+
+## end of functions
+
+
+
+
+
+
+
+## Start the execution
+
+# 1.input the date, giving "202001" and the number of days of the month
+year = str(input("Which year?"))
+month = str(input("Which month (in MM) ?"))
+Y=int(year)
+M=int(month)
+
+from calendar import monthrange
+day=monthrange(Y, M)[1]
+checkingmonth = year+month
+
+
+
+##### put the Loop Stopper here
+##### put the Loop Stopper here
+##### put the Loop Stopper here
+##### put the Loop Stopper here
+##### put the Loop Stopper here
+##### put the Loop Stopper here
+
+
+
+
+
+
+# 2. get the urls contain forecasts
+
+# define required variables
+urlA=[]
+urlB=[]
+urlC=[]
+urlD=[]
+
+
+
+## Making D into double digit as needed for the url. 
+D=(str(day).zfill(2))
+
+# loop the days in the hkgov press release
+import requests
+for d in range (0,day):
+    D=(str(d+1).zfill(2))
+    url = 'https://www.info.gov.hk/gia/wr/' + checkingmonth +'/'+D+'.htm'
+    data = requests.get(url)
+    ninedayselector() 
+
+# record into Dataframe
+import pandas as pd
+urldf=pd.DataFrame(urlD)
+urldf
+
+
+
+# 3. Pull weather data from the individual forecast pages
+
+## define Dictionaries 
+datetemp={'Forecast Issue time':{}}
+datewind={'Forecast Issue time':{}}
+
+
+
+# loop for all availble urls
+for i in range (0,len(urlD)):
+    url = urlD[i]
+    data = requests.get(url)
+    tempfinder()
+
+    
+    
+# import dt and dw into DataFrame
+
+import pandas as pd
+dt=pd.DataFrame(datetemp)
+dw=pd.DataFrame(datewind)
+
+
+
+# 4.1 Create csv files to the Directory 
+dt.to_csv (r'\Users\tempForecast.csv', index = True, header=True)
+dw.to_csv (r'\Users\tempForecast.csv', index = True, header=True)
+
+
+
+
+
+# 4.2 Create a download link
+# Define functions to download as CSV or Excel
+from IPython.display import HTML
+import pandas as pd
+import base64, io
+
+# Downloadink of the CSVs
+def createlink():  
+    # generate Temp forecast record
+    filename=checkingmonth+'forecastTEMP.csv'
+    downloadtitle="Download my data of: " + filename
+    csv = dt.to_csv(index=True)
+    b64 = base64.b64encode(csv.encode())
+    payload = b64.decode()
+    html = '<a download="{filename}" href="data:text/csv;base64,{payload}" target="_blank">{title}</a>'
+    html1 = html.format(payload=payload,title=downloadtitle,filename=filename)
+
+
+
+    # generate Wind forecast record
+    filename=checkingmonth+'forecastWIND.csv'
+    downloadtitle="Download my data of: " + filename
+    csv = dw.to_csv(index=True)
+    b64 = base64.b64encode(csv.encode())
+    payload = b64.decode()
+    html = '<a download="{filename}" href="data:text/csv;base64,{payload}" target="_blank">{title}</a>'
+    html2 = html.format(payload=payload,title=downloadtitle,filename=filename)
+    
+    return HTML(html1 + '<p>' +html2)
+
+
+
+
+
+
+###loop stopper. Run limited days for test-run 
+day=2
+###end of loop stopper
+
+
+
+# Show the download links
+createlink()
